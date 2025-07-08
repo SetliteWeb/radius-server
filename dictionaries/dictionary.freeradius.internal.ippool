@@ -1,0 +1,25 @@
+# -*- text -*-
+# Copyright (C) 2022 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: 979621b020f3f64532dd8e987e8e7fd271aef05c $
+#
+#	Attributes used by IP-Pool modules (5100-5199)
+#
+#	$Id: 979621b020f3f64532dd8e987e8e7fd271aef05c $
+#
+
+#
+#	All of these attributes are internal.
+#
+FLAGS	internal
+
+ATTRIBUTE	IP-Pool					5100	tlv
+
+BEGIN 	IP-Pool
+ATTRIBUTE	Name					1	string	# Generic identifier for the IP pool to allocate from
+ATTRIBUTE	Name-NA					2	string	# DHCPv6 - Non-Temporary association pool
+ATTRIBUTE	Name-PD					3	string	# DHCPv6 - Prefix-deligation pool
+ATTRIBUTE	Name-TA					4	string	# DHCPv6 - Temporary association pool
+
+ATTRIBUTE	Range					6	string
+END		IP-Pool

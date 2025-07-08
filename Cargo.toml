@@ -1,0 +1,8 @@
+[package]
+name = "radius-server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+md5 = "0.8.0"
+tokio = {version="1.46.1",features=["full"]}

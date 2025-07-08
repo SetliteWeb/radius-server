@@ -1,0 +1,583 @@
+# -*- text -*-
+# Copyright (C) 2024 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: 77649441ea08ad4fbe1d34989eabc66f4b39de86 $
+#
+#	Non Protocol Attributes used by FreeRADIUS
+#
+#	$Id: 77649441ea08ad4fbe1d34989eabc66f4b39de86 $
+#
+
+#
+#	All of these attributes are internal.
+#
+FLAGS	internal
+
+#	The attributes number ranges are allocates as follows:
+#
+#	Range:	500-999
+#		server-side attributes which can go in a reply list
+
+# 	These attributes CAN go in the reply item list.
+ATTRIBUTE	Fall-Through				500	bool
+ATTRIBUTE	Relax-Filter				501	bool
+ATTRIBUTE	Next-Shortest-Prefix			502	bool
+#
+# Exec-Program and Exec-Program-Wait are no longer supported in v4.
+#
+
+#	These attributes CANNOT go in the reply item list.
+
+#
+#	Range:	1000+
+#		Attributes which cannot go in a reply list.
+#
+#
+#	Range:	1000-1199
+#		Miscellaneous server attributes.
+#
+#
+#	Non-Protocol Attributes
+#	These attributes are used internally by the server
+#
+
+#
+#	Range:	1 - 10
+#		Attribute lists
+#
+ATTRIBUTE	Root					1	group
+ATTRIBUTE	request					2	group
+ATTRIBUTE	reply					3	group
+ATTRIBUTE	control					4	group
+ATTRIBUTE	session-State				5	group
+ATTRIBUTE	local-variables				6	group
+
+#
+#	Range:	11 - 19
+#		Section codes
+#
+ATTRIBUTE	Protocol				11	integer
+ATTRIBUTE	Auth-Type				12	integer
+
+#
+#	Range:	20 - 49
+#		Unlang attributes
+#
+ATTRIBUTE	Load-Balance-Key			20	string
+ATTRIBUTE	Proxy-To-Realm				21	string
+# 22 was Replicate-To-Realm
+# 23 was Virtual-Server
+# 24 was Module-Return-Code
+# 25 was Module-Method
+# 26 was Request-Processing-Stage
+
+#
+#	Range:	50 - 99
+#		Packet attributes
+#
+ATTRIBUTE	Packet-Original-Timestamp		56	date
+
+ATTRIBUTE	Net					60	tlv
+ATTRIBUTE	Src					.1	tlv
+ATTRIBUTE	IP					.1.1	combo-ip
+ATTRIBUTE	Port					.1.2	uint16
+ATTRIBUTE	Dst					.2	tlv clone=.Src
+ATTRIBUTE	Timestamp				.3	date
+ATTRIBUTE	Interface				.4	string
+
+#
+#
+#	Range:	100-200
+#		Module Control attributes
+#
+## 100 was Group-Name
+ATTRIBUTE	Huntgroup-Name				101	string
+ATTRIBUTE	Simultaneous-Use			102	integer
+ATTRIBUTE	Strip-User-Name				103	integer
+
+#	Range:	1000-2000
+#		Policy attributes
+#
+ATTRIBUTE	Stripped-User-Name			1000	string
+ATTRIBUTE	Stripped-User-Domain			1001	string
+
+# 1002..1009 were Menu, Termination-Menu, Prefix, Suffix, Group,
+# Connext-Rate, Add-Prefix, Add-Suffix
+ATTRIBUTE	Expiration				1010	date
+
+# 1011 was Client-Shortname.  Use %client(shortname) instead
+
+# 1012 Was Raw-Attribute.  No longer supported
+ATTRIBUTE	User-Category				1013	string
+
+ATTRIBUTE	Pam-Auth				1014	string
+# 1015 was Current-Time
+
+ATTRIBUTE	Realm					1017	string
+# 1018 was No-Such-Attribute
+
+ATTRIBUTE	Acct-Session-Start-Time			1019	date
+ATTRIBUTE	Acct-Unique-Session-Id			1020	string
+# 1021 was Client-IP-Address.  Just use Net.Src.IP
+ATTRIBUTE	LDAP-UserDN				1022	string
+ATTRIBUTE	SQL-User-Name				1023	string
+
+ATTRIBUTE	SMB-Account-CTRL			1024	integer
+ATTRIBUTE	SMB-Account-CTRL-TEXT			1025	string
+ATTRIBUTE	User-Profile				1026	string
+# 1027-1036 were Digest attributes.
+
+ATTRIBUTE	Module-Success-Message			1037	string
+ATTRIBUTE	Module-Failure-Message			1038	string
+ATTRIBUTE	Rewrite-Rule				1039	string
+# 1040 was Digest-HA1
+
+ATTRIBUTE	MS-CHAP-Use-NTLM-Auth			1041	uint8
+
+VALUE	MS-CHAP-Use-NTLM-Auth		No			0
+VALUE	MS-CHAP-Use-NTLM-Auth		Yes			1
+VALUE	MS-CHAP-Use-NTLM-Auth		Auto			2
+
+ATTRIBUTE	NTLM-User-Name				1042	string
+ATTRIBUTE	MS-CHAP-User-Name			1043	string
+
+# 1089 was Time-Of-Day
+
+ATTRIBUTE	SQL-Table-Name				1110	string
+ATTRIBUTE	Home-Server-Pool			1111	string
+ATTRIBUTE	Result-Status				1112	string
+
+#
+#  Attributes for dynamic clients 1120 - 1126
+#
+ATTRIBUTE	FreeRADIUS-Client-IP-Address		1120	ipaddr
+ATTRIBUTE	FreeRADIUS-Client-IPv6-Address		1121	ipv6addr
+
+# The rest of the FreeRADIUS-Client-* attributes are at 1150...
+ATTRIBUTE	FreeRADIUS-Client-Require-MA		1122	uint8
+
+# Ordering is important here, as the values are a bitmask.
+VALUE	FreeRADIUS-Client-Require-MA		No			0
+VALUE	FreeRADIUS-Client-Require-MA		Yes			1
+VALUE	FreeRADIUS-Client-Require-MA		Auto			2
+
+ATTRIBUTE	FreeRADIUS-Client-Limit-Proxy-State	1123	uint8
+
+# Ordering is important here, as the values are a bitmask.
+VALUE	FreeRADIUS-Client-Limit-Proxy-State	No			0
+VALUE	FreeRADIUS-Client-Limit-Proxy-State	Yes			1
+VALUE	FreeRADIUS-Client-Limit-Proxy-State	Auto			2
+
+ATTRIBUTE	FreeRADIUS-Client-Secret		1124	string
+ATTRIBUTE	FreeRADIUS-Client-Shortname		1125	string
+ATTRIBUTE	FreeRADIUS-Client-NAS-Type		1126	string
+ATTRIBUTE	FreeRADIUS-Client-Virtual-Server	1127	string
+
+#
+#	For send/recv CoA packets (like Auth-Type, Acct-Type, etc.)
+#
+#ATTRIBUTE	Recv-CoA-Type				1131	integer
+#ATTRIBUTE	Send-CoA-Type				1132	integer
+
+ATTRIBUTE	Packet-Transmit-Counter			1134	integer
+ATTRIBUTE	Cached-Session-Policy			1135	string
+ATTRIBUTE	MS-CHAP-New-Cleartext-Password		1136	string
+ATTRIBUTE	MS-CHAP-New-NT-Password			1137	octets
+
+#	For default policies
+
+ATTRIBUTE	Called-Station-SSID			1139	string
+
+ATTRIBUTE	Acct-Input-Octets64			1148	uint64
+ATTRIBUTE	Acct-Output-Octets64			1149	uint64
+
+ATTRIBUTE	FreeRADIUS-Client-IP-Prefix		1150	ipv4prefix
+ATTRIBUTE	FreeRADIUS-Client-IPv6-Prefix		1151	ipv6prefix
+ATTRIBUTE	FreeRADIUS-Response-Delay		1152	integer
+ATTRIBUTE	FreeRADIUS-Client-Src-IP-Address	1153	ipaddr
+ATTRIBUTE	FreeRADIUS-Client-Src-IPv6-Address	1154	ipv6addr
+ATTRIBUTE	FreeRADIUS-Response-Delay-USec		1155	integer
+ATTRIBUTE	FreeRADIUS-Client-Track-Connections	1156	bool
+ATTRIBUTE	FreeRADIUS-Client-Connected		1157	bool
+
+ATTRIBUTE	REST-HTTP-Header			1160	string
+ATTRIBUTE	REST-HTTP-Body				1161	string
+ATTRIBUTE	REST-HTTP-Status-Code			1162	integer
+
+ATTRIBUTE	Cache-Expires				1170	date
+ATTRIBUTE	Cache-Created				1171	date
+ATTRIBUTE	Cache-TTL				1172	signed
+ATTRIBUTE	Cache-Status-Only			1173	bool
+ATTRIBUTE	Cache-Merge-New				1174	bool
+ATTRIBUTE	Cache-Entry-Hits			1175	integer
+
+ATTRIBUTE	Cache-Allow-Merge			1176	bool
+ATTRIBUTE	Cache-Allow-Insert			1177	bool
+
+# 1178 unused
+
+ATTRIBUTE	SMTP-Mail-Header			1179	string
+ATTRIBUTE	SMTP-Mail-Body				1180	string
+ATTRIBUTE	SMTP-Sender-Address			1181	string
+ATTRIBUTE	SMTP-Recipients				1182	string
+ATTRIBUTE	SMTP-TO					1183	string
+ATTRIBUTE	SMTP-CC					1184	string
+ATTRIBUTE	SMTP-BCC				1185	string
+ATTRIBUTE	SMTP-Attachments			1186	string
+
+ATTRIBUTE	Session-State-User-Name			1189	string
+
+ATTRIBUTE	Exec-Export				1190	string
+
+#
+#  Server-side "listen type = foo"
+#
+ATTRIBUTE	Listen-Socket-Type			1250	integer
+
+VALUE	Listen-Socket-Type		none			0
+VALUE	Listen-Socket-Type		status			0
+VALUE	Listen-Socket-Type		proxy			1
+VALUE	Listen-Socket-Type		auth			2
+VALUE	Listen-Socket-Type		auth+acct		2
+VALUE	Listen-Socket-Type		acct			3
+VALUE	Listen-Socket-Type		detail			4
+VALUE	Listen-Socket-Type		vmps			5
+VALUE	Listen-Socket-Type		dhcp			6
+VALUE	Listen-Socket-Type		control			7
+VALUE	Listen-Socket-Type		coa			8
+
+ATTRIBUTE	Outer-Realm-Name			1251	string
+ATTRIBUTE	Inner-Realm-Name			1252	string
+ATTRIBUTE	Proto					1254	tlv
+
+#
+#	Range:	1255 - 1699
+#		Unused
+#
+
+#
+#	Range: 1700-1899
+#		Temporary attributes, for local storage.
+#
+ATTRIBUTE	Tmp-Group-0				1700	group
+ATTRIBUTE	Tmp-Group-1				1701	group
+ATTRIBUTE	Tmp-Group-2				1702	group
+ATTRIBUTE	Tmp-Group-3				1703	group
+ATTRIBUTE	Tmp-Group-4				1704	group
+ATTRIBUTE	Tmp-Group-5				1705	group
+ATTRIBUTE	Tmp-Group-6				1706	group
+ATTRIBUTE	Tmp-Group-7				1707	group
+ATTRIBUTE	Tmp-Group-8				1708	group
+ATTRIBUTE	Tmp-Group-9				1709	group
+
+ATTRIBUTE	Tmp-String-0				1710	string
+ATTRIBUTE	Tmp-String-1				1711	string
+ATTRIBUTE	Tmp-String-2				1712	string
+ATTRIBUTE	Tmp-String-3				1713	string
+ATTRIBUTE	Tmp-String-4				1714	string
+ATTRIBUTE	Tmp-String-5				1715	string
+ATTRIBUTE	Tmp-String-6				1716	string
+ATTRIBUTE	Tmp-String-7				1717	string
+ATTRIBUTE	Tmp-String-8				1718	string
+ATTRIBUTE	Tmp-String-9				1719	string
+
+ATTRIBUTE	Tmp-Integer-0				1720	integer
+ATTRIBUTE	Tmp-Integer-1				1721	integer
+ATTRIBUTE	Tmp-Integer-2				1722	integer
+ATTRIBUTE	Tmp-Integer-3				1723	integer
+ATTRIBUTE	Tmp-Integer-4				1724	integer
+ATTRIBUTE	Tmp-Integer-5				1725	integer
+ATTRIBUTE	Tmp-Integer-6				1726	integer
+ATTRIBUTE	Tmp-Integer-7				1727	integer
+ATTRIBUTE	Tmp-Integer-8				1728	integer
+ATTRIBUTE	Tmp-Integer-9				1729	integer
+
+ATTRIBUTE	Tmp-IP-Address-0			1730	ipaddr
+ATTRIBUTE	Tmp-IP-Address-1			1731	ipaddr
+ATTRIBUTE	Tmp-IP-Address-2			1732	ipaddr
+ATTRIBUTE	Tmp-IP-Address-3			1733	ipaddr
+ATTRIBUTE	Tmp-IP-Address-4			1734	ipaddr
+ATTRIBUTE	Tmp-IP-Address-5			1735	ipaddr
+ATTRIBUTE	Tmp-IP-Address-6			1736	ipaddr
+ATTRIBUTE	Tmp-IP-Address-7			1737	ipaddr
+ATTRIBUTE	Tmp-IP-Address-8			1738	ipaddr
+ATTRIBUTE	Tmp-IP-Address-9			1739	ipaddr
+
+ATTRIBUTE	Tmp-Octets-0				1740	octets
+ATTRIBUTE	Tmp-Octets-1				1741	octets
+ATTRIBUTE	Tmp-Octets-2				1742	octets
+ATTRIBUTE	Tmp-Octets-3				1743	octets
+ATTRIBUTE	Tmp-Octets-4				1744	octets
+ATTRIBUTE	Tmp-Octets-5				1745	octets
+ATTRIBUTE	Tmp-Octets-6				1746	octets
+ATTRIBUTE	Tmp-Octets-7				1747	octets
+ATTRIBUTE	Tmp-Octets-8				1748	octets
+ATTRIBUTE	Tmp-Octets-9				1749	octets
+
+ATTRIBUTE	Tmp-Date-0				1750	date
+ATTRIBUTE	Tmp-Date-1				1751	date
+ATTRIBUTE	Tmp-Date-2				1752	date
+ATTRIBUTE	Tmp-Date-3				1753	date
+ATTRIBUTE	Tmp-Date-4				1754	date
+ATTRIBUTE	Tmp-Date-5				1755	date
+ATTRIBUTE	Tmp-Date-6				1756	date
+ATTRIBUTE	Tmp-Date-7				1757	date
+ATTRIBUTE	Tmp-Date-8				1758	date
+ATTRIBUTE	Tmp-Date-9				1759	date
+
+ATTRIBUTE	Tmp-uint64-0				1760	uint64
+ATTRIBUTE	Tmp-uint64-1				1761	uint64
+ATTRIBUTE	Tmp-uint64-2				1762	uint64
+ATTRIBUTE	Tmp-uint64-3				1763	uint64
+ATTRIBUTE	Tmp-uint64-4				1764	uint64
+ATTRIBUTE	Tmp-uint64-5				1765	uint64
+ATTRIBUTE	Tmp-uint64-6				1766	uint64
+ATTRIBUTE	Tmp-uint64-7				1767	uint64
+ATTRIBUTE	Tmp-uint64-8				1768	uint64
+ATTRIBUTE	Tmp-uint64-9				1769	uint64
+
+ATTRIBUTE	Tmp-int64-0				1770	int64
+ATTRIBUTE	Tmp-int64-1				1771	int64
+ATTRIBUTE	Tmp-int64-2				1772	int64
+ATTRIBUTE	Tmp-int64-3				1773	int64
+ATTRIBUTE	Tmp-int64-4				1774	int64
+ATTRIBUTE	Tmp-int64-5				1775	int64
+ATTRIBUTE	Tmp-int64-6				1776	int64
+ATTRIBUTE	Tmp-int64-7				1777	int64
+ATTRIBUTE	Tmp-int64-8				1778	int64
+ATTRIBUTE	Tmp-int64-9				1779	int64
+
+ATTRIBUTE	Tmp-Signed-0				1780	signed
+ATTRIBUTE	Tmp-Signed-1				1781	signed
+ATTRIBUTE	Tmp-Signed-2				1782	signed
+ATTRIBUTE	Tmp-Signed-3				1783	signed
+ATTRIBUTE	Tmp-Signed-4				1784	signed
+ATTRIBUTE	Tmp-Signed-5				1785	signed
+ATTRIBUTE	Tmp-Signed-6				1786	signed
+ATTRIBUTE	Tmp-Signed-7				1787	signed
+ATTRIBUTE	Tmp-Signed-8				1788	signed
+ATTRIBUTE	Tmp-Signed-9				1789	signed
+
+ATTRIBUTE	Tmp-Ethernet-0				1790	ether
+ATTRIBUTE	Tmp-Ethernet-1				1791	ether
+ATTRIBUTE	Tmp-Ethernet-2				1792	ether
+ATTRIBUTE	Tmp-Ethernet-3				1793	ether
+ATTRIBUTE	Tmp-Ethernet-4				1794	ether
+ATTRIBUTE	Tmp-Ethernet-5				1795	ether
+ATTRIBUTE	Tmp-Ethernet-6				1796	ether
+ATTRIBUTE	Tmp-Ethernet-7				1797	ether
+ATTRIBUTE	Tmp-Ethernet-8				1798	ether
+ATTRIBUTE	Tmp-Ethernet-9				1799	ether
+
+ATTRIBUTE	Tmp-Time-Delta-0			1800	time_delta
+ATTRIBUTE	Tmp-Time-Delta-1			1801	time_delta
+ATTRIBUTE	Tmp-Time-Delta-2			1802	time_delta
+ATTRIBUTE	Tmp-Time-Delta-3			1803	time_delta
+ATTRIBUTE	Tmp-Time-Delta-4			1804	time_delta
+ATTRIBUTE	Tmp-Time-Delta-5			1805	time_delta
+ATTRIBUTE	Tmp-Time-Delta-6			1806	time_delta
+ATTRIBUTE	Tmp-Time-Delta-7			1807	time_delta
+ATTRIBUTE	Tmp-Time-Delta-8			1808	time_delta
+ATTRIBUTE	Tmp-Time-Delta-9			1809	time_delta
+
+ATTRIBUTE	Tmp-TLV-0				1810	tlv
+ATTRIBUTE	a					.1	uint32
+ATTRIBUTE	b					.2	uint32
+ATTRIBUTE	c					.3	string
+ATTRIBUTE	d					.4	ipaddr
+
+#
+#  1810 - 1879 - unused
+#
+
+ATTRIBUTE	Tmp-Float-0				1880	float32
+ATTRIBUTE	Tmp-Float-1				1881	float32
+ATTRIBUTE	Tmp-Float-2				1882	float32
+ATTRIBUTE	Tmp-Float-3				1883	float32
+ATTRIBUTE	Tmp-Float-4				1884	float32
+ATTRIBUTE	Tmp-Float-5				1885	float32
+ATTRIBUTE	Tmp-Float-6				1886	float32
+ATTRIBUTE	Tmp-Float-7				1887	float32
+ATTRIBUTE	Tmp-Float-8				1888	float32
+ATTRIBUTE	Tmp-Float-9				1889	float32
+
+#  Used by xlat expressions to print true/false instead of yes/no
+ATTRIBUTE	Expr-Bool-Enum				1890	bool
+VALUE	Expr-Bool-Enum			true			1
+VALUE	Expr-Bool-Enum			false			0
+
+ATTRIBUTE	Log-Message				1894	string
+ATTRIBUTE	Log-Level				1895	integer
+ATTRIBUTE	Log-Type				1896	integer
+
+#	Range:	1900-1909
+#	WiMAX server-side attributes.
+#
+#	These are NOT sent in a packet, but are otherwise
+#	available for testing and validation.  The various
+#	things that *are* sent in a packet are derived from
+#	these attributes.
+#
+ATTRIBUTE	WiMAX-MN-NAI				1900	string
+
+ATTRIBUTE	TLS-Certificate				1901	tlv
+BEGIN		TLS-Certificate
+ATTRIBUTE	Serial					1	octets
+ATTRIBUTE	Signature				2	octets
+ATTRIBUTE	Signature-Algorithm			3	string
+ATTRIBUTE	Issuer					4	string
+ATTRIBUTE	Not-Before				5	date
+ATTRIBUTE	Not-After				6	date
+ATTRIBUTE	Subject					7	string
+ATTRIBUTE	Common-Name				8	string
+ATTRIBUTE	Crl-Last-Update				9	date
+ATTRIBUTE	Crl-Next-Update				10	date
+ATTRIBUTE	Subject-Alt-Name-Email			11	string
+ATTRIBUTE	Subject-Alt-Name-DNS			12	string
+ATTRIBUTE	Subject-Alt-Name-UPN			13	string
+ATTRIBUTE	X509v3-Extended-Key-Usage		14	string
+ATTRIBUTE	X509v3-Subject-Key-Identifier		15	string
+ATTRIBUTE	X509v3-Authority-Key-Identifier		16	string
+ATTRIBUTE	X509v3-Basic-Constraints		17	string
+ATTRIBUTE	X509v3-CRL-Distribution-Points		18	string
+END		TLS-Certificate
+
+ATTRIBUTE	TLS-Certificate-Chain-Depth		1902	uint32
+
+ATTRIBUTE	TLS-PSK-Identity			1933	string
+ATTRIBUTE	TLS-Session-Certificate-File		1934	string
+ATTRIBUTE	TLS-Session-Require-Client-Certificate	1935	bool
+
+# Set and retrieved by EAP-TLS code
+ATTRIBUTE	TLS-OCSP-Cert-Valid			1943	integer
+VALUE	TLS-OCSP-Cert-Valid		unknown			3
+VALUE	TLS-OCSP-Cert-Valid		skipped			2
+VALUE	TLS-OCSP-Cert-Valid		yes			1
+VALUE	TLS-OCSP-Cert-Valid		no			0
+
+# Number of seconds before new OCSP status information will be available
+ATTRIBUTE	TLS-OCSP-Next-Update			1944	integer
+ATTRIBUTE	TLS-OCSP-Response			1945	octets
+
+ATTRIBUTE	TLS-Client-Error-Code			1946	uint8
+VALUE	TLS-Client-Error-Code		Close-Notify		0
+VALUE	TLS-Client-Error-Code		End-Of-Early-Data	1
+VALUE	TLS-Client-Error-Code		Unexpected-Message	10
+VALUE	TLS-Client-Error-Code		Bad-Record-Mac		20
+VALUE	TLS-Client-Error-Code		Decryption-Failed	21
+VALUE	TLS-Client-Error-Code		Record-Overflow		22
+VALUE	TLS-Client-Error-Code		Decompression-Failure	30
+VALUE	TLS-Client-Error-Code		Handshake-Failure	40
+VALUE	TLS-Client-Error-Code		No-Certificate		41
+VALUE	TLS-Client-Error-Code		Bad-Certificate		42
+VALUE	TLS-Client-Error-Code		Unsupported-Certificate	43
+VALUE	TLS-Client-Error-Code		Certificate-Revoked	44
+VALUE	TLS-Client-Error-Code		Certificate-Expired	45
+VALUE	TLS-Client-Error-Code		Certificate-Unknown	46
+VALUE	TLS-Client-Error-Code		Illegal-Parameter	47
+VALUE	TLS-Client-Error-Code		Unknown-CA		48
+VALUE	TLS-Client-Error-Code		Access-Denied		49
+VALUE	TLS-Client-Error-Code		Decode-Error		50
+VALUE	TLS-Client-Error-Code		Decrypt-Error		51
+VALUE	TLS-Client-Error-Code		Export-Restriction	60
+VALUE	TLS-Client-Error-Code		Protocol-Version	70
+VALUE	TLS-Client-Error-Code		Insufficient-Security	71
+VALUE	TLS-Client-Error-Code		Internal-Error		80
+VALUE	TLS-Client-Error-Code		Inappropriate-Fallback	86
+VALUE	TLS-Client-Error-Code		User-Cancelled		90
+VALUE	TLS-Client-Error-Code		No-Renegotiation	100
+VALUE	TLS-Client-Error-Code		Missing-Extension	109
+VALUE	TLS-Client-Error-Code		Unsupported-Extension	110
+VALUE	TLS-Client-Error-Code		Certificate-Unobtainable 111
+VALUE	TLS-Client-Error-Code		Unrecognized-Name	112
+VALUE	TLS-Client-Error-Code		Bad-Certificate-Status-Response 113
+VALUE	TLS-Client-Error-Code		Bad-Certificate-Hash-Value 114
+VALUE	TLS-Client-Error-Code		Unknown-PSK-Identity	115
+VALUE	TLS-Client-Error-Code		Certificate-Required	116
+VALUE	TLS-Client-Error-Code		No-Application-Protocol	120
+
+ATTRIBUTE	TLS-Session-Version			1947	string
+ATTRIBUTE	TLS-Session-Cipher-Suite		1948	string
+ATTRIBUTE	TLS-Session-Resume-Type			1949	integer
+
+VALUE	TLS-Session-Resume-Type		stateful		1
+VALUE	TLS-Session-Resume-Type		stateless		2
+
+#
+#  Attributes for casting
+#
+ATTRIBUTE	Cast-Time-Res-Sec			1950	time_delta	precision=seconds
+ATTRIBUTE	Cast-Time-Res-Min			1951	time_delta	precision=minutes
+ATTRIBUTE	Cast-Time-Res-Hour			1952	time_delta	precision=hours
+ATTRIBUTE	Cast-Time-Res-Day			1953	time_delta	precision=days
+ATTRIBUTE	Cast-Time-Res-Week			1954	time_delta	precision=weeks
+ATTRIBUTE	Cast-Time-Res-Month			1955	time_delta	precision=months
+ATTRIBUTE	Cast-Time-Res-Year			1956	time_delta	precision=years
+ATTRIBUTE	Cast-Time-Res-Centi-Sec			1957	time_delta	precision=centiseconds
+ATTRIBUTE	Cast-Time-Res-Milli-Sec			1958	time_delta	precision=milliseconds
+ATTRIBUTE	Cast-Time-Res-Micro-Sec			1959	time_delta	precision=microseconds
+ATTRIBUTE	Cast-Time-Res-Nano-Sec			1960	time_delta	precision=nanoseconds
+
+#
+#	Range:	1961-2199
+#		Free
+#
+
+#
+#	Range:	2200-2219
+#		Utilities bundled with the server
+#
+ATTRIBUTE	Radclient-Test-Name			2200	string
+ATTRIBUTE	Request-Authenticator			2201	octets
+ATTRIBUTE	Radclient-CoA-Filename			2202	string
+ATTRIBUTE	Radclient-CoA-Filter			2203	string
+
+#
+#	Range:  2220-2259
+#		 Attributes used as trigger arguments
+#
+ATTRIBUTE	Connection-Pool-Server			2220	string
+ATTRIBUTE	Connection-Pool-Port			2221	short
+ATTRIBUTE	Exfile-Name				2223	string
+ATTRIBUTE	LDAP-Sync-Base-DN			2224	string
+
+#
+#	Range:	2261-2299
+#		Free
+#
+
+#	Range: 2300 - 2399
+#		Attributes used for casting.
+#		They are automatically defined by the server core.
+#		Do NOT define attributes in this range!
+#
+ATTRIBUTE	Cast-Base				2300	byte
+
+#
+#	Range:	2400-2999
+#		Free
+#
+
+#	Range:	3000-3999
+#		Site-local attributes (see raddb/dictionary.in)
+#		Do NOT define attributes in this range!
+#
+#	Range:	4000-65535
+#		Unused
+#
+#	Range:	65536-
+#		Invalid.  Don't use.
+#
+
+#
+#	Non-Protocol Integer Translations
+#
+
+VALUE	Auth-Type			Reject			4
+VALUE	Auth-Type			Accept			254
+
+#
+#	Experimental Non-Protocol Integer Translations for FreeRADIUS
+#
+VALUE	Strip-User-Name			No			0
+VALUE	Strip-User-Name			Yes			1
