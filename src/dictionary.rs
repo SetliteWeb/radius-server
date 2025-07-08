@@ -17,6 +17,48 @@ pub struct Dictionary {
 }
 
 impl Dictionary {
+    pub fn load_embedded() -> Result<Self, String> {
+        let embedded = include_str!("../dictionaries/dictionary");
+        Self::parse_from_str(embedded)
+    }
+ pub fn parse_from_str(content: &str) -> Result<Self, String> {
+        let mut attributes = HashMap::new();
+        let mut vendors = HashMap::new();
+
+        for (lineno, line) in content.lines().enumerate() {
+            let line = line.trim();
+            if line.is_empty() || line.starts_with('#') {
+                continue;
+            }
+
+            if line.starts_with("ATTRIBUTE") {
+                let parts: Vec<&str> = line.split_whitespace().collect();
+                if parts.len() >= 4 {
+                    let name = parts[1].to_string();
+                    let code = parts[2].parse::<u32>()
+                        .map_err(|e| format!("Invalid code on line {}: {}", lineno + 1, e))?;
+                    let data_type = parts[3].to_string();
+
+                    attributes.insert(code, RadiusAttributeDef {
+                        name,
+                        code,
+                        vendor: None,
+                        data_type,
+                    });
+                }
+            } else if line.starts_with("VENDOR") {
+                let parts: Vec<&str> = line.split_whitespace().collect();
+                if parts.len() >= 3 {
+                    let name = parts[1].to_string();
+                    let id = parts[2].parse::<u32>()
+                        .map_err(|e| format!("Invalid vendor ID on line {}: {}", lineno + 1, e))?;
+                    vendors.insert(name, id);
+                }
+            }
+        }
+
+        Ok(Dictionary { attributes, vendors })
+    }
     pub fn load_from_file<P: AsRef<Path>>(path: P) -> Result<Self, String> {
         let mut attributes = HashMap::new();
         let mut vendors = HashMap::new();

@@ -5,7 +5,7 @@ use radius_server::{dictionary::Dictionary, packet::{RadiusAttribute}, serve};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let dict = Arc::new(Dictionary::load_from_file("dictionaries/dictionary")?);
+    let dict = Arc::new(Dictionary::load_embedded()?);
     let secret = "test123";
 
     serve("0.0.0.0:1812", dict, secret, |packet| {
