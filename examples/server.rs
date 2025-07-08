@@ -1,14 +1,18 @@
 use std::sync::Arc;
-
-use radius_server::{dictionary::Dictionary, packet::{RadiusAttribute}, serve};
-
+use radius_server::{
+    dictionary::Dictionary,
+    packet::RadiusAttribute,
+    serve_async,
+};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Load the RADIUS dictionary
     let dict = Arc::new(Dictionary::load_embedded()?);
     let secret = "test123";
 
-    serve("0.0.0.0:1812", dict, secret, |packet| {
+    // Start the RADIUS server using an async handler
+    serve_async("0.0.0.0:1812", dict, secret, move |packet| async move {
         println!("🔍 Incoming ID {} from {:?}", packet.identifier, packet.username());
 
         if let Some(username) = packet.username() {
@@ -23,5 +27,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         } else {
             Ok(packet.reply_reject("Missing username"))
         }
-    }).await
+    })
+    .await
 }
