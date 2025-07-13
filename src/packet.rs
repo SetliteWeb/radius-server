@@ -1,4 +1,10 @@
 use std::str;
+pub const CODE_ACCOUNTING_REQUEST: u8 = 4;
+pub const CODE_ACCOUNTING_RESPONSE: u8 = 5;
+
+pub const ATTR_ACCT_STATUS_TYPE: u8 = 40;
+pub const ATTR_ACCT_SESSION_ID: u8 = 44;
+pub const ATTR_ACCT_SESSION_TIME: u8 = 46;
 
 #[derive(Debug,Clone)]
 pub struct RadiusPacket {

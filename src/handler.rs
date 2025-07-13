@@ -4,6 +4,7 @@ use crate::{
     packet::{RadiusAttribute, RadiusPacket},
 };
 use md5;
+use tokio::net::UdpSocket;
 
 /// Builds a RADIUS response packet with the proper Response Authenticator.
 pub fn build_response_with_auth(
@@ -75,4 +76,79 @@ pub fn handle(packet: RadiusPacket, dict: Arc<Dictionary>) -> Result<RadiusPacke
     let accept = RadiusPacket::access_accept(packet.identifier, attributes);
     let response = build_response_with_auth(accept, packet.authenticator, "test123");
     Ok(response)
+}
+
+
+
+
+/// Verifies an Accounting-Request packet's Request Authenticator
+pub fn verify_accounting_request_authenticator(
+    packet: &[u8],
+    secret: &str,
+    received_auth: [u8; 16],
+) -> bool {
+    if packet.len() < 20 {
+        return false;
+    }
+
+    let mut data = Vec::from(&packet[0..4]);
+data.extend_from_slice(&[0u8; 16]); // ✅ 16 zero bytes as per RFC
+    data.extend_from_slice(&packet[20..]);
+    data.extend_from_slice(secret.as_bytes());
+
+    let hash = md5::compute(&data);
+    hash.0 == received_auth
+}
+
+/// Builds an Accounting-Response packet
+pub fn build_accounting_response(identifier: u8, request_auth: [u8; 16], secret: &str) -> Vec<u8> {
+    let mut buf = vec![5, identifier, 0x00, 0x14]; // Code=5, length=20
+    let mut temp = buf.clone();
+    temp.extend_from_slice(&request_auth);
+    temp.extend_from_slice(secret.as_bytes());
+
+    let hash = md5::compute(&temp);
+    buf.extend_from_slice(&hash.0);
+    buf
+}
+
+/// Serves incoming Accounting-Request packets and responds
+pub async fn serve_accounting_async<F, Fut>(
+    addr: &str,
+    dict: Arc<Dictionary>,
+    secret: &str,
+    handler: F,
+) -> Result<(), Box<dyn std::error::Error>>
+where
+    F: Fn(RadiusPacket) -> Fut + Send + Sync + 'static,
+    Fut: std::future::Future<Output = Result<(), String>> + Send,
+{
+    let socket = UdpSocket::bind(addr).await?;
+    println!("📡 Accounting server listening on {addr}");
+
+    let mut buf = [0u8; 1024];
+    loop {
+        let (len, src) = socket.recv_from(&mut buf).await?;
+        let raw_packet = &buf[..len];
+
+        let packet = match RadiusPacket::from_bytes(raw_packet) {
+            Ok(p) => p,
+            Err(e) => {
+                eprintln!("❌ Failed to parse: {e}");
+                continue;
+            }
+        };
+
+        if !verify_accounting_request_authenticator(raw_packet, secret, packet.authenticator) {
+            eprintln!("🚫 Invalid accounting authenticator.");
+            continue;
+        }
+
+        if let Err(e) = handler(packet.clone()).await {
+            eprintln!("⚠️  Handler error: {e}");
+        }
+
+        let response = build_accounting_response(packet.identifier, packet.authenticator, secret);
+        socket.send_to(&response, src).await?;
+    }
 }
