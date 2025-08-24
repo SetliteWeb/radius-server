@@ -300,3 +300,82 @@ fn decode_vendor_specific(value: &[u8]) -> String {
 
     format!("VendorID={}, Type={}, Data={:?}", vendor_id, vendor_type, payload)
 }
+#[derive(Debug, Clone)]
+pub struct AccountingPacket {
+    pub code: u8,
+    pub identifier: u8,
+    pub length: u16,
+    pub authenticator: [u8; 16],
+    pub attributes: Vec<AccountingAttribute>,
+}
+
+#[derive(Debug, Clone)]
+pub enum AccountingAttribute {
+    UserName(String),
+    AcctStatusType(String),  // "Start", "Stop", "Interim-Update"
+    AcctSessionId(String),
+    AcctSessionTime(u32),
+    AcctInputOctets(u64),
+    AcctOutputOctets(u64),
+    AcctTerminateCause(String),
+    NasIp([u8; 4]),
+    Unknown(u8, Vec<u8>),
+}
+impl From<RadiusPacket> for AccountingPacket {
+    fn from(pkt: RadiusPacket) -> Self {
+        let attributes = pkt.attributes.into_iter().map(|attr| {
+            match attr.typ {
+                1 => AccountingAttribute::UserName(String::from_utf8_lossy(&attr.value).to_string()),
+                40 => { // Acct-Status-Type
+                    let v = u32::from_be_bytes(attr.value.try_into().unwrap_or([0,0,0,0]));
+                    let status = match v {
+                        1 => "Start",
+                        2 => "Stop",
+                        3 => "Interim-Update",
+                        _ => "Unknown",
+                    };
+                    AccountingAttribute::AcctStatusType(status.to_string())
+                }
+                44 => AccountingAttribute::AcctSessionId(String::from_utf8_lossy(&attr.value).to_string()),
+                46 => {
+                    let secs = u32::from_be_bytes(attr.value.try_into().unwrap_or([0,0,0,0]));
+                    AccountingAttribute::AcctSessionTime(secs)
+                }
+                42 => {
+                    let val = u32::from_be_bytes(attr.value.try_into().unwrap_or([0,0,0,0]));
+                    AccountingAttribute::AcctInputOctets(val as u64)
+                }
+                43 => {
+                    let val = u32::from_be_bytes(attr.value.try_into().unwrap_or([0,0,0,0]));
+                    AccountingAttribute::AcctOutputOctets(val as u64)
+                }
+                49 => { // Acct-Terminate-Cause
+                    let v = u32::from_be_bytes(attr.value.try_into().unwrap_or([0,0,0,0]));
+                    let cause = match v {
+                        1 => "User-Request",
+                        2 => "Lost-Carrier",
+                        3 => "Lost-Service",
+                        _ => "Other",
+                    };
+                    AccountingAttribute::AcctTerminateCause(cause.to_string())
+                }
+                4 => {
+                    if attr.value.len() == 4 {
+                        AccountingAttribute::NasIp([attr.value[0], attr.value[1], attr.value[2], attr.value[3]])
+                    } else {
+                        AccountingAttribute::Unknown(attr.typ, attr.value)
+                    }
+                }
+                _ => AccountingAttribute::Unknown(attr.typ, attr.value),
+            }
+        }).collect();
+
+        AccountingPacket {
+            code: pkt.code,
+            identifier: pkt.identifier,
+            length: pkt.length,
+            authenticator: pkt.authenticator,
+            attributes,
+        }
+    }
+}

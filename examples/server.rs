@@ -2,7 +2,7 @@ use std::sync::Arc;
 use radius_server::{
     dictionary::Dictionary,
     handler::serve_accounting_async,
-    packet::RadiusAttribute,
+    packet::{AccountingPacket, RadiusAttribute},
     serve_async,
 };
 
@@ -26,9 +26,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let auth_server = serve_async("0.0.0.0:1812", dict_auth, &secret_auth, move |packet| async move {
         println!("🔍 Incoming ID {} from {:?}", packet.identifier, packet.username());
+      let acc_pkt: AccountingPacket = packet.clone().into();
+    println!("{:?}", acc_pkt);
 
         if let Some(username) = packet.username() {
-            if username.trim() == "ec:30:b3:6d:24:6a" {
+            if username.trim() == " " {
                 Ok(packet.reply_accept(vec![
                     RadiusAttribute::session_timeout(3600),
                     RadiusAttribute::reply_message("Welcome, admin."),
